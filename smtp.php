@@ -1,69 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>PHPMailer - SMTP test</title>
-</head>
-<body>
 <?php
-$email = $_REQUEST['email'];
-$message = $_REQUEST['message'];
-require_once 'PHPMailerAutoload.php';
+require 'PHPMailerAutoload.php';
 
-$results_messages = array();
+$mail = new PHPMailer;
 
-$mail = new PHPMailer(true);
-$mail->CharSet = 'utf-8';
+//$mail->SMTPDebug = 3;                               // Enable verbose debug output
 
-class phpmailerAppException extends phpmailerException {}
+$mail->isSMTP();                                      // Set mailer to use SMTP
+$mail->Host = 'mail.smtp2go.com';  // Specify main and backup SMTP servers
+$mail->SMTPAuth = true;                               // Enable SMTP authentication
+$mail->Username = 'akshay.shete058@gmail.com';                 // SMTP username
+$mail->Password = 'omjadhav';                           // SMTP password
+$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+$mail->Port = 2525;                                    // TCP port to connect to
 
-try {
-$to = 'contactus@example.com';
-if(!PHPMailer::validateAddress($to)) {
-  throw new phpmailerAppException("Email address " . $to . " is invalid -- aborting!");
+$mail->setFrom('akshay@gmail.com', 'Aksha');
+$mail->addAddress('akshay.shete057@gmail.com', 'Joe User');     // Add a recipient
+//$mail->addAddress('ellen@example.com');               // Name is optional
+//$mail->addReplyTo('info@example.com', 'Information');
+//$mail->addCC('cc@example.com');
+//$mail->addBCC('bcc@example.com');
+
+//$mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
+//$mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+$mail->isHTML(true);                                  // Set email format to HTML
+
+$mail->Subject = 'Contact Us ';
+$mail->Body    = 'Hello How r u??';
+$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+if(!$mail->send()) {
+    echo 'Message could not be sent.';
+    echo 'Mailer Error: ' . $mail->ErrorInfo;
+} else {
+    echo 'Message has been sent';
 }
-$mail->isSMTP();
-$mail->SMTPDebug  = 0;
-$mail->Host       = "localhost";
-$mail->Port       = "465";
-$mail->SMTPSecure = "ssl";
-$mail->SMTPAuth   = true;
-$mail->Username   = "contactus@example.com";
-$mail->Password   = "password";
-$mail->From       = $email;
-$mail->Subject  = "Test(PHPMailer test using SMTP)";
-$mail->body = $message;
-$mail->WordWrap = 80;
-$mail->msgHTML($body, dirname(__FILE__), true); //Create message bodies and embed images
-$mail->addAttachment('images/phpmailer_mini.png','phpmailer_mini.png');  // optional name
-$mail->addAttachment('images/phpmailer.png', 'phpmailer.png');  // optional name
-
-try {
-  $mail->send();
-  $results_messages[] = "Message has been sent using SMTP";
-}
-catch (phpmailerException $e) {
-  throw new phpmailerAppException('Unable to send to: ' . $to. ': '.$e->getMessage());
-}
-}
-catch (phpmailerAppException $e) {
-  $results_messages[] = $e->errorMessage();
-}
-
-if (count($results_messages) > 0) {
-  echo "<h2>Run results</h2>\
-";
-  echo "<ul>\
-";
-foreach ($results_messages as $result) {
-  echo "<li>$result</li>\
-";
-}
-echo "</ul>\
-";
-}
-?>
-</body>
-</html>
-
-
